@@ -81,7 +81,7 @@ inference.
 
 ## Reading order
 
-Start with [JAYS\_README.md](./JAYS_README.md) for a plain language explanation of all
+Start with [JAYS_README.md](./JAYS_README.md) for a plain language explanation of all
 three components. Each folder then has its own README with methodology, calibration
 sources, and limitations.
 
@@ -93,4 +93,3 @@ single seed. Collaboration and critique welcome, particularly from payments and 
 operations practitioners who can identify where the recovery model is naive.
 
 Part of the DharmaAGI architecture: governance components for agentic systems.
-

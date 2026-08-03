@@ -14,12 +14,15 @@ escalation cheaper rather than rarer.
 
 ## Result
 
-| | analyst hrs/week | labour cost (90 days) | fraud caught |
-|---|---|---|---|
-| Escalation as a black box | 19.7 | $11,349 | 4 of 4 |
-| Pause Engine | **5.3** | **$3,042** | 4 of 4 |
+Mean across 15 seeds:
 
-**73% less analyst time at identical protection.**
+| | analyst hrs/week | sd |
+|---|---|---|
+| Escalation as a black box | 18.9 | 0.5 |
+| Pause Engine | **5.1** | 0.1 |
+
+**73.0% less analyst time (sd 0.5) at unchanged protection.** One of the most stable
+results in the repository.
 
 ## What each mechanism actually contributed
 
@@ -55,8 +58,9 @@ safe, while auto-release-eligible items timed out unreviewed.
 
 A review is only worth its cost when the default disposition would be risky. The
 corrected key conditions stake on whether the engine would otherwise release the item.
-Result at the same capacity: **$0** unreviewed value released, at every capacity level
-tested.
+Result at the same capacity: **$0** unreviewed value released, on every one of 15
+seeds and at every capacity level tested, against a mean of $29,845 for arrival
+order.
 
 ## Timeout defaults
 

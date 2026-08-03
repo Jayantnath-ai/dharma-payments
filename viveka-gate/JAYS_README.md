@@ -2,7 +2,7 @@
 
 Plain language. No framework vocabulary. Read this before demoing it to anyone.
 
-\---
+---
 
 ## The one paragraph version
 
@@ -20,7 +20,7 @@ Two pieces:
 **Adhikara Ledger v0.1** (the earned trust ledger) learns over time which vendors have
 earned the right to be paid without a human checking.
 
-\---
+---
 
 ## Part 1: Viveka Gate, the decision
 
@@ -66,7 +66,7 @@ size unrecoverable wires when the agent is only about 88 percent sure. A CFO may
 call that too aggressive. The tradeoff chart exists so you can have that argument
 with real numbers instead of opinions.
 
-\---
+---
 
 ## Part 2: Adhikara Ledger, learning who to trust
 
@@ -119,15 +119,101 @@ support, and says so.
 
 ### What the numbers mean
 
-Your current human process interrupts 1.7 percent of payments and catches 1 fraud in
-6. The gate with no learning interrupts 64 percent, which is unusable. The gate after
-shadow learning interrupts 44 percent and catches most fraud.
+One percentage was hiding three different costs, so the system now reports all of
+them. An escalation eats analyst time. A probe is an automated test payment that no
+human ever sees. And a held $80,000 wire is not the same event as a held $500
+invoice.
 
-More interruption than today, dramatically more fraud caught. Whether that trade is
-worth it is the customer's call, and the shadow report is what lets them decide with
-their own numbers.
+| | needs a human | dollars delayed | analyst hours per week |
+|---|---|---|---|
+| Your process today | 0.9% | 2.1% | 0.4 |
+| Gate, no learning | 61.7% | 79.0% | 29.3 |
+| Gate, shadow calibrated | 39.8% | 62.0% | 18.9 |
 
-\---
+Every figure above is a mean across 20 random seeds with a standard deviation under
+2 points, so they are measurements rather than one lucky run.
+
+Two things to notice, and the second one matters more.
+
+Splitting the number did not flatter the system. Dollar friction is higher than event
+friction, 62 against 44 percent, because held payments skew large by construction.
+The honest measure looks worse than the blunt one.
+
+And the number that decides adoption is not a percentage at all. It is 19.5 analyst
+hours a week, roughly half a person, against 0.4 today. That is the real barrier, and
+it is the thing to attack next. The percentage was never the problem.
+
+---
+
+## Part 3: Pause Engine, making the interruptions cheap
+
+### The problem it solves
+
+Measuring friction properly showed the real barrier was not the percentage of
+payments held. It was that clearing the queue needed 19.7 analyst hours a week,
+roughly half a person, against 0.4 hours today. Nobody hires half a person to run a
+fraud gate.
+
+The gate cannot fix this, because those payments genuinely are uncertain. The cost has
+to come out of the review itself.
+
+### What we do
+
+Show the reviewer the evidence up front. Most of a review was spent working out why
+the payment was flagged and what this vendor normally does, all of which the system
+already knew. A review drops from about 12 minutes to 4.
+
+Work the queue in the order that protects the most money, not the order things
+arrived. Skip reviews where the amount at stake is less than the cost of looking. Work
+same-vendor items together. And give every held payment an expiry with a sensible
+default, because a payment held forever because nobody looked is the worst outcome in
+the system.
+
+### What the numbers mean
+
+18.9 analyst hours a week becomes **5.1**, with identical fraud protection. About
+$3,000 of labour over 90 days instead of $11,300.
+
+The surprise: nearly all of that came from the simplest change, showing the reviewer
+the evidence. The clever mechanisms, priority ordering and batching, contributed less
+than a fifth between them.
+
+### The design error worth knowing about
+
+The first version of the priority ordering sent the biggest, riskiest payments to
+humans first. That sounds obviously right and it was wrong. Those payments are already
+safe, because when nobody reviews them in time the system holds them rather than
+releasing them. Meanwhile the smaller payments, the ones the system releases by
+default when time runs out, were sitting unreviewed. Prioritising by size actively
+made things worse than reviewing in arrival order.
+
+The fix: prioritise by what is at stake **among payments the system would otherwise
+let through**. A review is only worth paying for when the default would be risky.
+Money released without review went from roughly $30,000 to exactly zero, on every
+one of fifteen random seeds tested.
+
+---
+
+## What the numbers survived, and what did not
+
+Every result here was originally produced from a single run. Because two earlier
+numbers in this project turned out to be flukes, everything was re-run across 15 to 20
+independent random simulations.
+
+The friction and analyst-time numbers held up almost exactly. The savings are real.
+
+Two things did not survive and were withdrawn. Any statement about dollars lost to
+fraud, and any statement of the form "caught 5 of 6", rest on a handful of fraud
+events in a six month window. Rerun the simulation and those numbers move wildly. They
+are illustrations, not measurements, and the repository now says so.
+
+One claim got worse on closer inspection. Against an attacker who has completely taken
+over a real vendor, including their genuine bank account, the earned-trust system
+catches about a third of attacks where the untrusting version catches about two
+thirds. Earning trust genuinely costs protection against that attacker. It was worth
+knowing before telling anyone otherwise.
+
+---
 
 ## The mistake I made, and why it is in the README
 
@@ -151,7 +237,7 @@ The important lesson: that 17 percent number was fake. It was cheap only because
 was unsafe. The real price of safe automation is 44 percent. Any vendor showing you a
 dramatic improvement without showing you this test has not run it.
 
-\---
+---
 
 ## Demo script, about 3 minutes
 
@@ -195,19 +281,16 @@ Then stop. If they ask one question it will be about the friction number. The an
 > The honest number is 44 percent, and it is higher than the fake number I could have
 > shown you. The 17 percent version was cheap because it was unsafe.
 
-\---
+---
 
-## If asked who built it
+## How this was built
 
 Architected and directed by Jayant Nath. Implementation written by Claude in a
-
 session where every version was attacked before it was accepted.
 
-Three impactful contributions were - 
-
-Pricing the cost of inaction, which is the load bearing idea in the whole system and the thing no shipping guardrail does. 
-
-Shadow mode as the calibration bootstrap. 
-
-And refusing to publish the 65 percent friction reduction until it had been attacked, which is what revealed the number was borrowed against a vulnerability.
-
+That loop is why this repository contains a rejected design, a documented bug, and an
+unsolved adversarial case rather than only results. The three findings that most
+shaped the outcome all came from refusing an earlier answer: that deferral must be
+priced rather than treated as a free safe harbour, that shadow mode is what makes
+calibration labels uncensored, and that the first version's 17 percent friction
+figure was unsafe and could not be published.

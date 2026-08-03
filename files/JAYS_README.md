@@ -127,8 +127,11 @@ invoice.
 | | needs a human | dollars delayed | analyst hours per week |
 |---|---|---|---|
 | Your process today | 0.9% | 2.1% | 0.4 |
-| Gate, no learning | 61.1% | 78.3% | 29.5 |
-| Gate, shadow calibrated | 40.5% | 62.0% | 19.5 |
+| Gate, no learning | 61.7% | 79.0% | 29.3 |
+| Gate, shadow calibrated | 39.8% | 62.0% | 18.9 |
+
+Every figure above is a mean across 20 random seeds with a standard deviation under
+2 points, so they are measurements rather than one lucky run.
 
 Two things to notice, and the second one matters more.
 
@@ -168,7 +171,7 @@ the system.
 
 ### What the numbers mean
 
-19.7 analyst hours a week becomes **5.3**, with identical fraud protection. About
+18.9 analyst hours a week becomes **5.1**, with identical fraud protection. About
 $3,000 of labour over 90 days instead of $11,300.
 
 The surprise: nearly all of that came from the simplest change, showing the reviewer
@@ -186,7 +189,29 @@ made things worse than reviewing in arrival order.
 
 The fix: prioritise by what is at stake **among payments the system would otherwise
 let through**. A review is only worth paying for when the default would be risky.
-Money released without review went from $106,000 to zero.
+Money released without review went from roughly $30,000 to exactly zero, on every
+one of fifteen random seeds tested.
+
+---
+
+## What the numbers survived, and what did not
+
+Every result here was originally produced from a single run. Because two earlier
+numbers in this project turned out to be flukes, everything was re-run across 15 to 20
+independent random simulations.
+
+The friction and analyst-time numbers held up almost exactly. The savings are real.
+
+Two things did not survive and were withdrawn. Any statement about dollars lost to
+fraud, and any statement of the form "caught 5 of 6", rest on a handful of fraud
+events in a six month window. Rerun the simulation and those numbers move wildly. They
+are illustrations, not measurements, and the repository now says so.
+
+One claim got worse on closer inspection. Against an attacker who has completely taken
+over a real vendor, including their genuine bank account, the earned-trust system
+catches about a third of attacks where the untrusting version catches about two
+thirds. Earning trust genuinely costs protection against that attacker. It was worth
+knowing before telling anyone otherwise.
 
 ---
 

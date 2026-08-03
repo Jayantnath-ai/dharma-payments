@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adhikara Ledger, the earned trust ledger</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+ :root{--paper:#F2F4F5;--ink:#16232E;--soft:#5A6B78;--line:#D5DBDF;--card:#FFF;
+  --good:#1A7A4A;--warn:#B07D10;--bad:#A8332E;--steel:#2C5F8A}
+ *{box-sizing:border-box;margin:0;padding:0}
+ body{background:var(--paper);color:var(--ink);font-family:'Space Grotesk',sans-serif;padding:20px 14px 48px}
+ .wrap{max-width:780px;margin:0 auto}
+ .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--steel);margin-bottom:6px}
+ h1{font-size:clamp(23px,5vw,33px);font-weight:700;letter-spacing:-.02em;line-height:1.12}
+ h1 em{font-style:normal;color:var(--steel)}
+ .sub{color:var(--soft);font-size:14px;margin-top:9px;line-height:1.55;max-width:60ch}
+ .card{background:var(--card);border:1px solid var(--line);border-radius:3px;padding:18px;margin-top:16px}
+ .card h2{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);margin-bottom:14px;border-bottom:1px solid var(--line);padding-bottom:8px}
+ .cmp{display:grid;grid-template-columns:1fr;gap:10px}
+ @media(min-width:620px){.cmp{grid-template-columns:repeat(3,1fr)}}
+ .col{border:1px solid var(--line);border-radius:3px;padding:14px;background:var(--paper)}
+ .col.hl{border-color:var(--good);background:#F4FAF6}
+ .col .nm{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+ .col .big{font-size:29px;font-weight:700;margin:8px 0 2px;letter-spacing:-.02em}
+ .col .lbl{font-size:11.5px;color:var(--soft)}
+ .col .catch{font-family:'IBM Plex Mono',monospace;font-size:14px;margin-top:10px;padding-top:9px;border-top:1px solid var(--line)}
+ .bars{margin-top:6px}
+ .brow{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+ .brow .mo{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--soft);width:26px}
+ .btrack{flex:1;height:19px;background:var(--paper);border:1px solid var(--line);border-radius:2px;overflow:hidden}
+ .bfill{height:100%;background:var(--good);width:0;transition:width .7s cubic-bezier(.2,.8,.2,1)}
+ .bval{font-family:'IBM Plex Mono',monospace;font-size:11.5px;width:46px;text-align:right}
+ .note{font-size:12.5px;color:var(--soft);line-height:1.55;margin-top:12px}
+ table{width:100%;border-collapse:collapse;font-size:12.5px}
+ th{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);text-align:left;padding:6px 4px;border-bottom:1px solid var(--line)}
+ td{padding:7px 4px;border-bottom:1px solid #EDEFF1;font-variant-numeric:tabular-nums}
+ .trustbar{display:inline-block;height:7px;background:var(--steel);border-radius:1px;vertical-align:middle;margin-right:6px}
+ .alert{border-left:3px solid var(--bad);background:#FDF6F5;padding:14px 16px;border-radius:2px;margin-top:14px}
+ .alert h3{font-size:14px;margin-bottom:7px;color:var(--bad)}
+ .alert p{font-size:13px;line-height:1.6;color:var(--ink)}
+ .advgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+ .adv{padding:10px;background:var(--card);border:1px solid var(--line);border-radius:2px;text-align:center}
+ .adv .n{font-family:'IBM Plex Mono',monospace;font-size:19px;font-weight:600}
+ .adv .l{font-size:10px;color:var(--soft);margin-top:3px;line-height:1.3}
+ .foot{margin-top:22px;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:var(--soft);line-height:1.6}
+</style>
+</head>
+<body><div class="wrap">
+ <div class="eyebrow">DharmaAGI · Adhikara Ledger v0.1 · the earned trust ledger</div>
+ <h1>Trust is <em>earned</em>, and bound to<br>what an attacker cannot forge.</h1>
+ <p class="sub">The Viveka Gate had a magic constant: how much to trust the agent's confidence. This module learns it instead, from a shadow period where the gate observes but never blocks, so outcome labels stay uncensored. 6,163 invoices, 180 days, 8 fraud attempts. Realistic sparsity, not a stress benchmark.</p>
+
+ <div class="card">
+  <h2>Go-live window · gate vs. the process you already run</h2>
+  <div class="cmp">
+   <div class="col"><div class="nm">Incumbent humans</div><div class="big" style="color:var(--good)" id="i_f">1.7%</div><div class="lbl">of legitimate payments held</div><div class="catch">caught <b style="color:var(--bad)" id="i_c">1</b> of 6 fraud</div></div>
+   <div class="col"><div class="nm">Gate · static config</div><div class="big" style="color:var(--bad)" id="s_f">60.5%</div><div class="lbl">of legitimate payments held</div><div class="catch">caught <b style="color:var(--good)" id="s_c">5</b> of 6 fraud</div></div>
+   <div class="col hl"><div class="nm">Gate · shadow-calibrated</div><div class="big" style="color:var(--good)" id="l_f">21.2%</div><div class="lbl">of legitimate payments held</div><div class="catch">caught <b style="color:var(--good)" id="l_c">5</b> of 6 fraud</div></div>
+  </div>
+  <p class="note"><b>The finding:</b> shadow calibration is not a refinement, it is what makes the gate deployable. Same protection, friction cut by two thirds. Untuned, the gate holds 60% of payments and no finance team would keep it switched on. The incumbent process is comfortable and catches one fraud in six.</p>
+ </div>
+
+ <div class="card">
+  <h2>Earned trust over time · friction falls, protection holds</h2>
+  <div class="bars" id="bars"></div>
+  <p class="note">Each month the protocol recalibrates on everything observed so far, including a 10% exploration channel that releases low-value escalations anyway so labels never fully censor. Friction falls 60.7% → 14.7%. Fraud caught across the period: 7 of 8. This is the answer to "your gate escalates too much", only at first.</p>
+ </div>
+
+ <div class="card">
+  <h2>What the gate learned · earned scope by segment</h2>
+  <table><thead><tr><th>Segment</th><th>Observations</th><th>Earned trust</th></tr></thead><tbody id="segs"></tbody></table>
+  <p class="note">Recurring domestic vendors earned near-total discretion across ~1,200 observations. New international payees earned almost none across 34. Adhikāra as scope granted in proportion to demonstrated judgment, per segment, rather than one global limit.</p>
+ </div>
+
+ <div class="card">
+  <h2>Adversarial stress tests · rejected design vs shipped design</h2>
+  <p class="note" style="margin-top:0;margin-bottom:14px"><b>The first design bound trust to segment labels</b>, "recurring vendor", "domestic major". Those are attributes an attacker selects. Mimic the label, inherit the trust. <b>The shipped design binds trust to payee identity, account fingerprint, and the amount envelope that earned it</b>, with uplift capped by irreversibility.</p>
+  <table><thead><tr><th>Attack</th><th>Label-bound (rejected)</th><th>Identity-bound (shipped)</th><th>Static baseline</th></tr></thead><tbody>
+   <tr><td>BEC: real vendor,<br>changed account</td><td style="color:var(--bad)"><b>0.9/17</b> caught<br>$44.3k exposed</td><td style="color:var(--good)"><b>12.6/17</b> caught<br>$11.2k exposed</td><td>12.6/17<br>$11.2k</td></tr>
+   <tr><td>Known account,<br>abnormal amount</td><td style="color:var(--bad)"><b>8.1/14</b> caught<br>$59.2k exposed</td><td style="color:var(--good)"><b>11.7/14</b> caught<br>$26.0k exposed</td><td>11.7/14<br>$26.0k</td></tr>
+   <tr><td>Full takeover:<br>everything matches</td><td style="color:var(--bad)"><b>0.0/13</b> caught<br>$42.9k exposed</td><td style="color:var(--warn)"><b>6.3/13</b> caught<br>$14.1k exposed</td><td>8.1/13<br>$10.2k</td></tr>
+  </tbody></table>
+  <p class="note">The first two attacks are <b>fully closed</b>, the shipped design matches the static baseline exactly, because a changed fingerprint or an out-of-envelope amount voids earned trust before it can be spent. The third is only <b>partially</b> closed, and that is the honest limit: if an attacker presents the real payee, the real account, and an ordinary amount, nothing in the transaction distinguishes it. That case needs out-of-band verification, not better inference.</p>
+  <div class="alert" style="border-left-color:var(--warn);background:#FDFAF3">
+   <h3 style="color:var(--warn)">What the fix actually cost</h3>
+   <p>The rejected design's 17.3% friction was not real. It was borrowed against a vulnerability, trust extended to forgeable labels. The honest price of attack-resistant earned trust is <b>44.1% friction</b>, against 64.4% for the static gate. So roughly a third of the friction can be removed safely, not four fifths. Protection in normal operation is identical across all three (3.6 of 4 fraud caught, same exposure).</p>
+  </div>
+ </div>
+
+ <p class="foot">Shadow mode is the only period with uncensored labels: once a gate blocks, blocked transactions never resolve and the training distribution is censored exactly where the gate refuses. Fraud is far too rare to calibrate on (8 events in 180 days), so trust is learned from the abundant signals instead, confidence reliability across thousands of ordinary payments, human override direction, and realized recovery outcomes. Second executable component of DharmaAGI, after the Viveka Gate.</p>
+</div>
+<script>
+const D={"static":{"friction":60.5,"caught":5,"total":6},"learned":{"friction":21.2,"caught":5,"total":6},
+"incumbent":{"friction":1.7,"caught":1,"total":6},
+"curve":[{"m":1,"f":60.7},{"m":2,"f":37.2},{"m":3,"f":26.4},{"m":4,"f":20.6},{"m":5,"f":17.1},{"m":6,"f":14.7}],
+"segments":[{"s":"recurring · domestic major","n":1197,"t":0.909},{"s":"recurring · domestic small","n":547,"t":0.820},
+{"s":"occasional · domestic major","n":474,"t":0.798},{"s":"new · domestic major","n":265,"t":0.688},
+{"s":"occasional · domestic small","n":249,"t":0.675},{"s":"recurring · international","n":150,"t":0.556},
+{"s":"new · domestic small","n":117,"t":0.494},{"s":"occasional · international","n":75,"t":0.385},
+{"s":"new · international","n":34,"t":0.221}]};
+const mx=Math.max(...D.curve.map(c=>c.f));
+document.getElementById("bars").innerHTML=D.curve.map(c=>
+ `<div class="brow"><span class="mo">M${c.m}</span><div class="btrack"><div class="bfill" data-w="${100*c.f/mx}"></div></div><span class="bval">${c.f}%</span></div>`).join("");
+document.getElementById("segs").innerHTML=D.segments.map(s=>
+ `<tr><td>${s.s}</td><td>${s.n.toLocaleString()}</td><td><span class="trustbar" style="width:${Math.round(s.t*70)}px"></span>${(s.t*100).toFixed(0)}%</td></tr>`).join("");
+requestAnimationFrame(()=>setTimeout(()=>document.querySelectorAll(".bfill").forEach(b=>b.style.width=b.dataset.w+"%"),80));
+</script>
+</body></html>

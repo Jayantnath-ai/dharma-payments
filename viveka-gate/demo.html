@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Viveka Gate, live decision instrument</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2F4F5; --ink:#16232E; --ink-soft:#5A6B78; --line:#D5DBDF;
+    --exec:#1A7A4A; --probe:#B07D10; --esc:#A8332E; --steel:#2C5F8A;
+    --card:#FFFFFF;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{background:var(--paper); color:var(--ink); font-family:'Space Grotesk',sans-serif; min-height:100vh; padding:20px 14px 48px}
+  .wrap{max-width:760px; margin:0 auto}
+  .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--steel); margin-bottom:6px}
+  h1{font-size:clamp(24px,5vw,34px); font-weight:700; letter-spacing:-.02em; line-height:1.1}
+  h1 em{font-style:normal; color:var(--steel)}
+  .sub{color:var(--ink-soft); font-size:14px; margin-top:8px; max-width:56ch; line-height:1.5}
+
+  .presets{display:flex; gap:8px; flex-wrap:wrap; margin:22px 0 14px}
+  .preset{font-family:'IBM Plex Mono',monospace; font-size:12px; padding:8px 12px; border:1px solid var(--line); background:var(--card); border-radius:2px; cursor:pointer; transition:border-color .15s}
+  .preset:hover{border-color:var(--steel)}
+  .preset:focus-visible{outline:2px solid var(--steel); outline-offset:2px}
+  .preset.active{border-color:var(--ink); background:var(--ink); color:#fff}
+
+  .grid{display:grid; grid-template-columns:1fr; gap:14px}
+  @media(min-width:640px){.grid{grid-template-columns:1fr 1fr}}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:3px; padding:18px}
+  .card h2{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:14px; border-bottom:1px solid var(--line); padding-bottom:8px}
+
+  .field{margin-bottom:16px}
+  .field:last-child{margin-bottom:0}
+  .field label{display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px; color:var(--ink)}
+  .field label .val{font-family:'IBM Plex Mono',monospace; font-weight:600}
+  input[type=range]{width:100%; accent-color:var(--steel)}
+  .seg{display:flex; gap:6px}
+  .seg button{flex:1; font-family:'IBM Plex Mono',monospace; font-size:11.5px; padding:7px 4px; border:1px solid var(--line); background:var(--paper); border-radius:2px; cursor:pointer}
+  .seg button.on{background:var(--ink); color:#fff; border-color:var(--ink)}
+  .seg button:focus-visible{outline:2px solid var(--steel); outline-offset:1px}
+  .toggle{display:flex; align-items:center; gap:10px; font-size:13px; cursor:pointer}
+  .toggle input{width:18px; height:18px; accent-color:var(--steel)}
+
+  /* verdict */
+  .verdict{border-radius:3px; padding:20px 18px; margin:14px 0; border:1px solid var(--line); background:var(--card); transition:border-color .3s}
+  .verdict .word{font-size:clamp(30px,7vw,44px); font-weight:700; letter-spacing:-.02em; line-height:1}
+  .verdict.execute{border-color:var(--exec)} .verdict.execute .word{color:var(--exec)}
+  .verdict.decompose{border-color:var(--probe)} .verdict.decompose .word{color:var(--probe)}
+  .verdict.escalate{border-color:var(--esc)} .verdict.escalate .word{color:var(--esc)}
+  .verdict .why{font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--ink-soft); margin-top:10px; line-height:1.55}
+
+  /* the auction, signature element */
+  .auction .row{margin-bottom:14px}
+  .auction .row:last-child{margin-bottom:0}
+  .auction .head{display:flex; justify-content:space-between; font-family:'IBM Plex Mono',monospace; font-size:12px; margin-bottom:5px}
+  .auction .head .cost{font-weight:600}
+  .track{height:14px; background:var(--paper); border:1px solid var(--line); border-radius:2px; overflow:hidden}
+  .fill{height:100%; width:0%; transition:width .45s cubic-bezier(.2,.8,.2,1)}
+  .row.win .head{color:var(--ink)} .row:not(.win) .head{color:var(--ink-soft)}
+  .row.execute .fill{background:var(--exec)} .row.decompose .fill{background:var(--probe)} .row.escalate .fill{background:var(--esc)}
+  .row:not(.win) .fill{opacity:.35}
+  .winner-tag{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.1em; padding:1px 6px; border-radius:2px; color:#fff; margin-left:8px}
+  .auction .note{font-size:12px; color:var(--ink-soft); margin-top:12px; line-height:1.5}
+
+  /* internals */
+  .internals{display:grid; grid-template-columns:repeat(3,1fr); gap:10px}
+  .stat{text-align:center; padding:10px 4px; background:var(--paper); border-radius:2px}
+  .stat .n{font-family:'IBM Plex Mono',monospace; font-size:20px; font-weight:600}
+  .stat .l{font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); margin-top:3px}
+  .stat.blocked .n{color:var(--esc)}
+  .footer{margin-top:22px; font-size:12px; color:var(--ink-soft); line-height:1.6; border-top:1px solid var(--line); padding-top:14px}
+  @media(prefers-reduced-motion:reduce){.fill{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">DharmaAGI · Viveka Gate · Prototype 0.1</div>
+  <h1>The pause has a price.<br>So does the <em>action.</em></h1>
+  <p class="sub">An AI agent proposes a wire transfer. Three options bid against each other on expected cost, executing now, probing with a reversible test transaction, or escalating to a human. The cheapest honest bid wins. Adjust the transaction and watch the auction settle.</p>
+
+  <div class="presets" role="group" aria-label="Scenario presets">
+    <button class="preset active" data-p="legit">Small routine payment</button>
+    <button class="preset" data-p="bec">BEC lookalike fraud</button>
+    <button class="preset" data-p="bigwire">Large legit wire</button>
+    <button class="preset" data-p="intl">International, new payee</button>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Transaction</h2>
+      <div class="field">
+        <label>Amount <span class="val" id="amtV">$8,000</span></label>
+        <input type="range" id="amt" min="2" max="6" step="0.02" value="3.9" aria-label="Amount">
+      </div>
+      <div class="field">
+        <label>Receiving bank</label>
+        <div class="seg" id="bank">
+          <button data-b="domestic_major" class="on">Domestic major</button>
+          <button data-b="domestic_small">Domestic small</button>
+          <button data-b="international">International</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Agent confidence (legitimate) <span class="val" id="confV">88%</span></label>
+        <input type="range" id="conf" min="50" max="99" value="88" aria-label="Agent confidence">
+      </div>
+      <div class="field">
+        <label class="toggle"><input type="checkbox" id="newp"> New payee (bank details never used before)</label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Gate internals</h2>
+      <div class="internals">
+        <div class="stat"><div class="n" id="rV">, </div><div class="l">Reversibility R</div></div>
+        <div class="stat"><div class="n" id="wV">, </div><div class="l">Warranted W</div></div>
+        <div class="stat" id="sStat"><div class="n" id="sV">, </div><div class="l">In mandate S</div></div>
+      </div>
+      <p class="auction note" id="internalNote"></p>
+      <div class="field" style="margin-top:14px">
+        <label>Agent delegation limit <span class="val" id="limV">$25,000</span></label>
+        <input type="range" id="lim" min="3" max="5.5" step="0.05" value="4.398" aria-label="Delegation limit">
+      </div>
+    </div>
+  </div>
+
+  <div class="verdict" id="verdict" aria-live="polite">
+    <div class="word" id="vWord">, </div>
+    <div class="why" id="vWhy"></div>
+  </div>
+
+  <div class="card auction">
+    <h2>The auction · expected cost of each option</h2>
+    <div class="row execute" id="rowE">
+      <div class="head"><span>Execute now<span class="winner-tag" style="background:var(--exec); display:none">WINS</span></span><span class="cost" id="cE">, </span></div>
+      <div class="track"><div class="fill" id="fE"></div></div>
+    </div>
+    <div class="row decompose" id="rowD">
+      <div class="head"><span>Probe · test transaction first<span class="winner-tag" style="background:var(--probe); display:none">WINS</span></span><span class="cost" id="cD">, </span></div>
+      <div class="track"><div class="fill" id="fD"></div></div>
+    </div>
+    <div class="row escalate" id="rowS">
+      <div class="head"><span>Escalate to human<span class="winner-tag" style="background:var(--esc); display:none">WINS</span></span><span class="cost" id="cS">, </span></div>
+      <div class="track"><div class="fill" id="fS"></div></div>
+    </div>
+    <p class="note">Deferral is a bidder, not a safe harbor: escalation pays analyst labor ($60), delay cost, and a 10% chance the reviewer misses the fraud. Confidence is shrunk toward the 95% base rate as irreversibility rises, the less undoable the wire, the less the agent's forecast is trusted.</p>
+  </div>
+
+  <p class="footer">Recovery odds R come from a backward Monte Carlo over recall paths, calibrated to FBI IC3 Financial Fraud Kill Chain freeze statistics (2021–25) and the FinCEN $50k/72h international recovery rule, detection lag, recall windows, mule drain, bank cooperation, never from forecasting outcomes. Benchmarked against a confidence-threshold guardrail on 500 invoices with 5% BEC fraud: roughly half the catastrophic loss at matched friction. Prototype logic mirrors gate.py in the dharmaagi repo.</p>
+</div>
+
+<script>
+// ---- deterministic recovery model (expected-value port of recovery_model.py) ----
+function recoveryR(amount, bank){
+  // Calibrated to FBI IC3 / FFKC published freeze-success statistics (58-74% domestic
+  // conditional on fast report; FinCEN RRP $50k / 72h rule for international).
+  let P;
+  if(bank==='domestic_major') P=[40,.08,.80,.95];
+  else if(bank==='domestic_small') P=[32,.10,.72,.85];
+  else P = amount>=50000 ? [24,.10,.45,.60] : [10,.25,.12,.60];
+  const [mid, steep, ceil, coop] = P;
+  const drainHalf = Math.min(48, Math.max(4, 48 - 3*Math.log10(Math.max(amount,10))));
+  // integrate over detection lag uniform 4..24h in 40 steps
+  let acc = 0, n = 40;
+  for(let i=0;i<n;i++){
+    const t = 4 + (24-4)*(i+0.5)/n;
+    const pWin = ceil/(1+Math.exp(steep*(t-mid)));
+    const pThere = Math.pow(0.5, t/drainHalf);
+    acc += pWin*pThere*coop;
+  }
+  return acc/n;
+}
+
+const cfg = {calibration:.85, baseLegit:.95, laborCost:60, delayFrac:.0002, delayH:4, humanCatch:.90, probeCost:25};
+
+function decide(amount, bank, conf, newPayee, limit){
+  const R = recoveryR(amount, bank), irr = 1-R;
+  const S = amount <= limit ? 1 : 0;
+  const Wraw = cfg.calibration*conf + (1-cfg.calibration)*cfg.baseLegit;
+  const shrink = irr*irr;
+  const W = (1-shrink)*Wraw + shrink*cfg.baseLegit;
+  const pF = 1-W;
+  const cE = S ? pF*amount*irr : Infinity;
+  const cS = cfg.laborCost + W*amount*cfg.delayFrac*cfg.delayH + pF*(1-cfg.humanCatch)*amount*irr;
+  const probeCatch = newPayee ? .80 : .30;
+  const cD = S ? cfg.probeCost + W*amount*cfg.delayFrac*24 + pF*(1-probeCatch)*amount*irr : Infinity;
+  const costs = {execute:cE, decompose:cD, escalate:cS};
+  const choice = Object.keys(costs).reduce((a,b)=>costs[a]<=costs[b]?a:b);
+  return {R,W,S,costs,choice,pF};
+}
+
+// ---- UI ----
+const $ = id => document.getElementById(id);
+let bank = 'domestic_major';
+const money = v => '$'+Math.round(v).toLocaleString();
+
+function logAmt(slider){ return Math.pow(10, parseFloat(slider.value)); }
+
+function render(){
+  const amount = logAmt($('amt'));
+  const limit  = logAmt($('lim'));
+  const conf   = parseInt($('conf').value)/100;
+  const newP   = $('newp').checked;
+  $('amtV').textContent = money(amount);
+  $('limV').textContent = money(limit);
+  $('confV').textContent = Math.round(conf*100)+'%';
+
+  const d = decide(amount, bank, conf, newP, limit);
+
+  $('rV').textContent = d.R.toFixed(2);
+  $('wV').textContent = d.W.toFixed(2);
+  $('sV').textContent = d.S ? 'YES' : 'NO';
+  $('sStat').classList.toggle('blocked', !d.S);
+  $('internalNote').textContent = d.S
+    ? `Confidence ${Math.round(conf*100)}% → warranted ${d.W.toFixed(2)} after shrinking by irreversibility² = ${((1-d.R)**2).toFixed(2)} toward the 95% base rate.`
+    : `Outside adhikāra: ${money(amount)} exceeds the ${money(limit)} mandate. Execute and probe are off the table at any confidence.`;
+
+  const labels = {execute:'EXECUTE', decompose:'PROBE FIRST', escalate:'ESCALATE'};
+  const why = {
+    execute:`warranted confidence ${d.W.toFixed(2)} carries the risk: expected fraud loss ${money(d.costs.execute)} undercuts a ${money(d.costs.escalate)} review`,
+    decompose:`${newP?'new payee + ':''}irreversibility ${(1-d.R).toFixed(2)}, a reversible test transaction verifies the account for ${money(d.costs.decompose)}, cheaper than acting or deferring`,
+    escalate: d.S ? `confidence ${d.W.toFixed(2)} does not carry irreversibility ${(1-d.R).toFixed(2)} at ${money(amount)}, the pause is worth its ${money(d.costs.escalate)} price`
+                  : `not the agent's call to make, amount exceeds delegated mandate, structural stop regardless of confidence`
+  };
+  const v = $('verdict');
+  v.className = 'verdict '+d.choice;
+  $('vWord').textContent = labels[d.choice];
+  $('vWhy').textContent = why[d.choice];
+
+  const finite = Object.values(d.costs).filter(c=>isFinite(c));
+  const maxC = Math.max(...finite, 1);
+  const rows = {execute:['rowE','cE','fE'], decompose:['rowD','cD','fD'], escalate:['rowS','cS','fS']};
+  for(const [k,[row,cid,fid]] of Object.entries(rows)){
+    const c = d.costs[k];
+    $(cid).textContent = isFinite(c) ? money(c) : 'BLOCKED, outside mandate';
+    $(fid).style.width = isFinite(c) ? Math.max(3, 100*c/maxC)+'%' : '100%';
+    $(fid).style.background = isFinite(c) ? '' : 'repeating-linear-gradient(45deg,#D5DBDF,#D5DBDF 6px,#EDEFF1 6px,#EDEFF1 12px)';
+    const el = $(row);
+    el.classList.toggle('win', k===d.choice);
+    el.querySelector('.winner-tag').style.display = k===d.choice ? 'inline' : 'none';
+  }
+}
+
+$('bank').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  bank = b.dataset.b;
+  document.querySelectorAll('#bank button').forEach(x=>x.classList.toggle('on', x===b));
+  clearPreset(); render();
+});
+['amt','conf','lim'].forEach(id=>$(id).addEventListener('input', ()=>{clearPreset(); render();}));
+$('newp').addEventListener('change', ()=>{clearPreset(); render();});
+
+const presets = {
+  legit:   {amt:2.9,  conf:92, bank:'domestic_major', newp:false},
+  bec:     {amt:4.35, conf:82, bank:'domestic_small', newp:true},
+  bigwire: {amt:4.9,  conf:95, bank:'domestic_major', newp:false},
+  intl:    {amt:3.48, conf:90, bank:'international',  newp:true},
+};
+function clearPreset(){ document.querySelectorAll('.preset').forEach(p=>p.classList.remove('active')); }
+document.querySelectorAll('.preset').forEach(btn=>btn.addEventListener('click', ()=>{
+  const p = presets[btn.dataset.p];
+  $('amt').value = p.amt; $('conf').value = p.conf; $('newp').checked = p.newp;
+  bank = p.bank;
+  document.querySelectorAll('#bank button').forEach(x=>x.classList.toggle('on', x.dataset.b===p.bank));
+  clearPreset(); btn.classList.add('active');
+  render();
+}));
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+{
+ "normal_static": {
+  "friction": 64.4,
+  "exposure": 5468,
+  "caught": 3.6,
+  "total": 4
+ },
+ "normal_segment": {
+  "friction": 17.3,
+  "exposure": 5468,
+  "caught": 3.6,
+  "total": 4
+ },
+ "normal_identity": {
+  "friction": 44.1,
+  "exposure": 5468,
+  "caught": 3.6,
+  "total": 4
+ },
+ "label_mimicry_static": {
+  "friction": 63.0,
+  "exposure": 11248,
+  "caught": 12.6,
+  "total": 17
+ },
+ "label_mimicry_segment": {
+  "friction": 6.3,
+  "exposure": 44322,
+  "caught": 0.9,
+  "total": 17
+ },
+ "label_mimicry_identity": {
+  "friction": 34.1,
+  "exposure": 11248,
+  "caught": 12.6,
+  "total": 17
+ },
+ "envelope_break_static": {
+  "friction": 63.0,
+  "exposure": 25970,
+  "caught": 11.7,
+  "total": 14
+ },
+ "envelope_break_segment": {
+  "friction": 5.6,
+  "exposure": 59236,
+  "caught": 8.1,
+  "total": 14
+ },
+ "envelope_break_identity": {
+  "friction": 29.9,
+  "exposure": 25970,
+  "caught": 11.7,
+  "total": 14
+ },
+ "full_takeover_static": {
+  "friction": 62.7,
+  "exposure": 10210,
+  "caught": 8.1,
+  "total": 13
+ },
+ "full_takeover_segment": {
+  "friction": 6.0,
+  "exposure": 42934,
+  "caught": 0.0,
+  "total": 13
+ },
+ "full_takeover_identity": {
+  "friction": 33.2,
+  "exposure": 14084,
+  "caught": 6.3,
+  "total": 13
+ }
+}

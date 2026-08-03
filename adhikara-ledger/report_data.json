@@ -1,0 +1,117 @@
+{
+ "static": {
+  "friction": 60.6,
+  "caught": 5,
+  "total": 6
+ },
+ "learned": {
+  "friction": 21.2,
+  "caught": 5,
+  "total": 6
+ },
+ "incumbent": {
+  "friction": 1.7,
+  "caught": 1,
+  "total": 6
+ },
+ "curve": [
+  {
+   "m": 1,
+   "f": 60.7
+  },
+  {
+   "m": 2,
+   "f": 37.2
+  },
+  {
+   "m": 3,
+   "f": 26.4
+  },
+  {
+   "m": 4,
+   "f": 20.6
+  },
+  {
+   "m": 5,
+   "f": 17.1
+  },
+  {
+   "m": 6,
+   "f": 14.7
+  }
+ ],
+ "segments": [
+  {
+   "vendor_class": "recurring",
+   "bank": "domestic_major",
+   "n": 1197,
+   "base_legit": 0.9999,
+   "evidence_weight": 0.9089
+  },
+  {
+   "vendor_class": "recurring",
+   "bank": "domestic_small",
+   "n": 547,
+   "base_legit": 0.9999,
+   "evidence_weight": 0.8201
+  },
+  {
+   "vendor_class": "occasional",
+   "bank": "domestic_major",
+   "n": 474,
+   "base_legit": 0.9999,
+   "evidence_weight": 0.798
+  },
+  {
+   "vendor_class": "new",
+   "bank": "domestic_major",
+   "n": 265,
+   "base_legit": 0.9998,
+   "evidence_weight": 0.6883
+  },
+  {
+   "vendor_class": "occasional",
+   "bank": "domestic_small",
+   "n": 249,
+   "base_legit": 0.9998,
+   "evidence_weight": 0.6748
+  },
+  {
+   "vendor_class": "recurring",
+   "bank": "international",
+   "n": 150,
+   "base_legit": 0.9997,
+   "evidence_weight": 0.5556
+  },
+  {
+   "vendor_class": "new",
+   "bank": "domestic_small",
+   "n": 117,
+   "base_legit": 0.9955,
+   "evidence_weight": 0.4937
+  },
+  {
+   "vendor_class": "occasional",
+   "bank": "international",
+   "n": 75,
+   "base_legit": 0.9996,
+   "evidence_weight": 0.3846
+  },
+  {
+   "vendor_class": "new",
+   "bank": "international",
+   "n": 34,
+   "base_legit": 0.993,
+   "evidence_weight": 0.2208
+  }
+ ],
+ "adversarial": {
+  "static_caught": 5,
+  "learned_caught": 1,
+  "decay_caught": 4,
+  "total": 8,
+  "static_exp": 9395,
+  "learned_exp": 25620,
+  "decay_exp": 23073
+ }
+}

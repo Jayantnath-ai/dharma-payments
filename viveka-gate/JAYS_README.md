@@ -2,7 +2,7 @@
 
 Plain language. No framework vocabulary. Read this before demoing it to anyone.
 
----
+\---
 
 ## The one paragraph version
 
@@ -20,7 +20,7 @@ Two pieces:
 **Adhikara Ledger v0.1** (the earned trust ledger) learns over time which vendors have
 earned the right to be paid without a human checking.
 
----
+\---
 
 ## Part 1: Viveka Gate, the decision
 
@@ -66,7 +66,7 @@ size unrecoverable wires when the agent is only about 88 percent sure. A CFO may
 call that too aggressive. The tradeoff chart exists so you can have that argument
 with real numbers instead of opinions.
 
----
+\---
 
 ## Part 2: Adhikara Ledger, learning who to trust
 
@@ -127,7 +127,7 @@ More interruption than today, dramatically more fraud caught. Whether that trade
 worth it is the customer's call, and the shadow report is what lets them decide with
 their own numbers.
 
----
+\---
 
 ## The mistake I made, and why it is in the README
 
@@ -151,7 +151,7 @@ The important lesson: that 17 percent number was fake. It was cheap only because
 was unsafe. The real price of safe automation is 44 percent. Any vendor showing you a
 dramatic improvement without showing you this test has not run it.
 
----
+\---
 
 ## Demo script, about 3 minutes
 
@@ -195,19 +195,19 @@ Then stop. If they ask one question it will be about the friction number. The an
 > The honest number is 44 percent, and it is higher than the fake number I could have
 > shown you. The 17 percent version was cheap because it was unsafe.
 
----
+\---
 
 ## If asked who built it
 
-I architected it and directed the build. Claude wrote the implementation.
+Architected and directed by Jayant Nath. Implementation written by Claude in a
 
-Three contributions were yours and you should be able to name them cold. Pricing the
-cost of inaction, which is the load bearing idea in the whole system and the thing no
-shipping guardrail does. Shadow mode as the calibration bootstrap. And refusing to
-publish the 65 percent friction reduction until it had been attacked, which is what
-revealed the number was borrowed against a vulnerability.
+session where every version was attacked before it was accepted.
 
-The obligation that creates: be able to explain any file in the repo without notes.
-Not write it from scratch, explain it. Spend an evening with gate.py and trust.py
-until the inverse horizon rule, the backward Monte Carlo, and the three part identity
-binding are yours to defend under questioning.
+Three impactful contributions were - 
+
+Pricing the cost of inaction, which is the load bearing idea in the whole system and the thing no shipping guardrail does. 
+
+Shadow mode as the calibration bootstrap. 
+
+And refusing to publish the 65 percent friction reduction until it had been attacked, which is what revealed the number was borrowed against a vulnerability.
+

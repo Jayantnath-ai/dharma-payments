@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tuning the gate: risk appetite dial</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+ :root{--paper:#F2F4F5;--ink:#16232E;--soft:#5A6B78;--line:#D5DBDF;--card:#FFF;
+  --auto:#1A7A4A;--probe:#B07D10;--human:#A8332E;--steel:#2C5F8A}
+ *{box-sizing:border-box;margin:0;padding:0}
+ body{background:var(--paper);color:var(--ink);font-family:'Space Grotesk',sans-serif;padding:20px 14px 48px}
+ .wrap{max-width:760px;margin:0 auto}
+ .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--steel);margin-bottom:6px}
+ h1{font-size:clamp(23px,5vw,32px);font-weight:700;letter-spacing:-.02em;line-height:1.12}
+ h1 em{font-style:normal;color:var(--steel)}
+ .sub{color:var(--soft);font-size:14px;margin-top:9px;line-height:1.55;max-width:60ch}
+ .card{background:var(--card);border:1px solid var(--line);border-radius:3px;padding:18px;margin-top:16px}
+ .card h2{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);margin-bottom:14px;border-bottom:1px solid var(--line);padding-bottom:8px}
+ .dial label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px}
+ .dial .v{font-family:'IBM Plex Mono',monospace;font-weight:600}
+ input[type=range]{width:100%;accent-color:var(--steel)}
+ .ticks{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--soft);margin-top:4px}
+ .stack{display:flex;height:52px;border:1px solid var(--line);border-radius:3px;overflow:hidden;margin:18px 0 10px}
+ .seg{display:flex;align-items:center;justify-content:center;color:#fff;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;transition:width .45s cubic-bezier(.2,.8,.2,1);overflow:hidden;white-space:nowrap}
+ .s-auto{background:var(--auto)} .s-probe{background:var(--probe)} .s-human{background:var(--human)}
+ .key{display:flex;flex-wrap:wrap;gap:16px;font-size:12px;color:var(--soft)}
+ .key i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:middle}
+ .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+ .st{padding:12px;background:var(--paper);border-radius:2px;text-align:center}
+ .st .n{font-family:'IBM Plex Mono',monospace;font-size:21px;font-weight:600}
+ .st .l{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--soft);margin-top:4px}
+ .verdict{border-radius:3px;padding:14px 16px;margin-top:16px;border-left:3px solid var(--steel);background:#F4F7FA;font-size:13.5px;line-height:1.6}
+ .verdict.warn{border-left-color:var(--human);background:#FDF6F5}
+ .verdict.good{border-left-color:var(--auto);background:#F4FAF6}
+ .verdict b{display:block;margin-bottom:4px}
+ .note{font-size:12.5px;color:var(--soft);line-height:1.55;margin-top:12px}
+ table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:4px}
+ th{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--soft);text-align:right;padding:6px 4px;border-bottom:1px solid var(--line)}
+ th:first-child{text-align:left}
+ td{padding:6px 4px;border-bottom:1px solid #EDEFF1;font-variant-numeric:tabular-nums;text-align:right}
+ td:first-child{text-align:left;font-family:'IBM Plex Mono',monospace}
+ tr.on{background:#F4F7FA;font-weight:600}
+ tr.dom{color:#A0AAB2}
+ .foot{margin-top:20px;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:var(--soft);line-height:1.6}
+</style>
+</head>
+<body><div class="wrap">
+ <div class="eyebrow">DharmaAGI · Viveka Gate · tuning</div>
+ <h1>You do not tune friction.<br>You tune <em>risk appetite.</em></h1>
+ <p class="sub">Friction is a consequence, not a setting. The only dial is how expensive you consider a human review, and every position on it buys less interruption with more exposure. Below is the actual measured curve, on 3,000 real-shape invoices after shadow calibration.</p>
+
+ <div class="card">
+  <h2>Risk appetite dial</h2>
+  <div class="dial">
+   <label><span>Cost you assign to one human review</span><span class="v" id="dv">$250</span></label>
+   <input type="range" id="d" min="0" max="6" step="1" value="3">
+   <div class="ticks"><span>$30</span><span>$60</span><span>$120</span><span>$250</span><span>$500</span><span>$1k</span><span>$2.5k</span></div>
+  </div>
+
+  <div class="stack">
+   <div class="seg s-auto" id="sa"></div>
+   <div class="seg s-probe" id="sp"></div>
+   <div class="seg s-human" id="sh"></div>
+  </div>
+  <div class="key">
+   <span><i style="background:var(--auto)"></i>Paid straight through</span>
+   <span><i style="background:var(--probe)"></i>Automated test payment first</span>
+   <span><i style="background:var(--human)"></i>Human review</span>
+  </div>
+
+  <div class="stats">
+   <div class="st"><div class="n" id="hn" style="color:var(--human)">9.2%</div><div class="l">Human interrupt rate</div></div>
+   <div class="st"><div class="n" id="en">$6,936</div><div class="l">Fraud exposure, 90 days</div></div>
+  </div>
+
+  <div class="verdict" id="vd"></div>
+ </div>
+
+ <div class="card">
+  <h2>The whole curve</h2>
+  <table><thead><tr><th>Dial</th><th>Straight through</th><th>Probe</th><th>Human</th><th>Exposure</th></tr></thead><tbody id="tb"></tbody></table>
+  <p class="note">Rows in grey are dominated: past $500 you accept more loss and get essentially nothing back, because human reviews have already fallen to noise. That is the end of the efficient frontier, and it is where the honest recommendation stops.</p>
+ </div>
+
+ <p class="foot">The metric that matters is the human interrupt rate, not total holds. An automated test payment costs about a dollar and the finance team never sees it; a human review costs analyst time and goodwill. Reporting both as one friction number, which the earlier version of this demo did, understates the gate badly. Exposure is expected unrecovered fraud over the 90 day window, in which six attempts were made.</p>
+</div>
+<script>
+const D=[{d:30,a:38.2,p:0.0,h:61.7,e:5468,c:3.6},{d:60,a:55.7,p:3.8,h:40.5,e:5468,c:3.6},
+{d:120,a:70.6,p:7.9,h:21.5,e:6936,c:3.5},{d:250,a:75.8,p:15.0,h:9.2,e:6936,c:3.5},
+{d:500,a:76.3,p:19.9,h:3.8,e:9305,c:3.3},{d:1000,a:76.2,p:21.8,h:2.1,e:9305,c:3.3},
+{d:2500,a:76.2,p:22.0,h:1.8,e:9305,c:3.3}];
+const money=v=>'$'+v.toLocaleString(), fmtD=v=>v>=1000?'$'+(v/1000)+'k':'$'+v;
+const $=i=>document.getElementById(i);
+function draw(){
+ const i=+$('d').value, r=D[i];
+ $('dv').textContent=fmtD(r.d);
+ $('sa').style.width=r.a+'%'; $('sp').style.width=r.p+'%'; $('sh').style.width=r.h+'%';
+ $('sa').textContent=r.a>12?r.a+'%':''; $('sp').textContent=r.p>10?r.p+'%':''; $('sh').textContent=r.h>10?r.h+'%':'';
+ $('hn').textContent=r.h+'%'; $('en').textContent=money(r.e);
+ const v=$('vd');
+ if(r.h>35){v.className='verdict warn';v.innerHTML='<b>Unusable in practice.</b> Interrupting more than a third of payments means the finance team switches it off in week one. A gate nobody runs protects nothing.';}
+ else if(r.d>=500){v.className='verdict warn';v.innerHTML='<b>Past the efficient frontier.</b> Human reviews are already near zero, so further loosening buys almost no time back and adds '+money(r.e-6936)+' of exposure. Strictly worse than the $250 setting.';}
+ else if(r.h<=12){v.className='verdict good';v.innerHTML='<b>The recommended range.</b> About one payment in eleven reaches a human, three quarters clear untouched, and the rest get a test payment nobody notices. Exposure is '+money(r.e)+' against '+money(35000)+' attempted.';}
+ else {v.className='verdict';v.innerHTML='<b>Conservative but workable.</b> Around one payment in five reaches a human. Defensible during a first quarter of live running, then loosen as the ledger accrues more history.';}
+ [...document.querySelectorAll('#tb tr')].forEach((t,k)=>t.classList.toggle('on',k===i));
+}
+$('tb').innerHTML=D.map(r=>`<tr class="${r.d>=500?'dom':''}"><td>${fmtD(r.d)}</td><td>${r.a}%</td><td>${r.p}%</td><td><b>${r.h}%</b></td><td>${money(r.e)}</td></tr>`).join('');
+$('d').addEventListener('input',draw); draw();
+</script>
+</body></html>

@@ -109,6 +109,14 @@ The result is that vendors earn discretion individually. A vendor you have paid 
 times, same bank account, same amount range, earns the right to be paid without a
 human looking. A brand new international payee earns nothing.
 
+### One number it sets for you
+
+The gate needs to know roughly how common fraud is in your business. Guess too high
+and it panics and holds most payments. The shadow period counts it directly, so
+nobody has to guess. If the shadow window happens to contain no fraud at all, it does
+not conclude fraud is impossible; it reports what a sample that size can actually
+support, and says so.
+
 ### What the numbers mean
 
 Your current human process interrupts 1.7 percent of payments and catches 1 fraud in

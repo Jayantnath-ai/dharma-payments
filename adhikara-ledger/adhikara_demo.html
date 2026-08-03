@@ -54,11 +54,11 @@
  <div class="card">
   <h2>Go-live window · gate vs. the process you already run</h2>
   <div class="cmp">
-   <div class="col"><div class="nm">Incumbent humans</div><div class="big" style="color:var(--good)" id="i_f">1.7%</div><div class="lbl">of legitimate payments held</div><div class="catch">caught <b style="color:var(--bad)" id="i_c">1</b> of 6 fraud</div></div>
-   <div class="col"><div class="nm">Gate · static config</div><div class="big" style="color:var(--bad)" id="s_f">60.5%</div><div class="lbl">of legitimate payments held</div><div class="catch">caught <b style="color:var(--good)" id="s_c">5</b> of 6 fraud</div></div>
-   <div class="col hl"><div class="nm">Gate · shadow-calibrated</div><div class="big" style="color:var(--good)" id="l_f">21.2%</div><div class="lbl">of legitimate payments held</div><div class="catch">caught <b style="color:var(--good)" id="l_c">5</b> of 6 fraud</div></div>
+   <div class="col"><div class="nm">Incumbent humans</div><div class="big" style="color:var(--good)" id="i_f">1.7%</div><div class="lbl">reach a human</div><div class="catch">caught <b style="color:var(--bad)" id="i_c">1</b> of 6 fraud</div></div>
+   <div class="col"><div class="nm">Gate · static config</div><div class="big" style="color:var(--bad)" id="s_f">61.7%</div><div class="lbl">reach a human</div><div class="catch">caught <b style="color:var(--good)" id="s_c">5</b> of 6 fraud</div></div>
+   <div class="col hl"><div class="nm">Gate · shadow-calibrated</div><div class="big" style="color:var(--good)" id="l_f">9.2%</div><div class="lbl">reach a human<br><span style="font-size:10.5px">75.8% clear untouched, 15% get an automated test payment</span></div><div class="catch">caught <b style="color:var(--good)" id="l_c">5</b> of 6 fraud</div></div>
   </div>
-  <p class="note"><b>The finding:</b> shadow calibration is not a refinement, it is what makes the gate deployable. Same protection, friction cut by two thirds. Untuned, the gate holds 60% of payments and no finance team would keep it switched on. The incumbent process is comfortable and catches one fraud in six.</p>
+  <p class="note"><b>The finding:</b> shadow calibration is not a refinement, it is what makes the gate deployable. Untuned, 62% of payments reach a human and no finance team keeps that switched on. Calibrated and tuned, 9% do, while protection holds. The incumbent process is comfortable and catches one fraud in six. Note that holds are not one thing: an automated test payment costs about a dollar and nobody sees it, a human review costs analyst time. Only the second is real friction.</p>
  </div>
 
  <div class="card">
@@ -84,7 +84,7 @@
   <p class="note">The first two attacks are <b>fully closed</b>, the shipped design matches the static baseline exactly, because a changed fingerprint or an out-of-envelope amount voids earned trust before it can be spent. The third is only <b>partially</b> closed, and that is the honest limit: if an attacker presents the real payee, the real account, and an ordinary amount, nothing in the transaction distinguishes it. That case needs out-of-band verification, not better inference.</p>
   <div class="alert" style="border-left-color:var(--warn);background:#FDFAF3">
    <h3 style="color:var(--warn)">What the fix actually cost</h3>
-   <p>The rejected design's 17.3% friction was not real. It was borrowed against a vulnerability, trust extended to forgeable labels. The honest price of attack-resistant earned trust is <b>44.1% friction</b>, against 64.4% for the static gate. So roughly a third of the friction can be removed safely, not four fifths. Protection in normal operation is identical across all three (3.6 of 4 fraud caught, same exposure).</p>
+   <p>The rejected design's numbers were not real. They were borrowed against a vulnerability, trust extended to forgeable labels. Measured properly, with identity-bound trust and the risk dial at its recommended setting, <b>9.2% of payments reach a human</b>. The rejected design's apparent advantage disappears once it is attacked. Protection in normal operation is identical across all three (3.6 of 4 fraud caught, same exposure).</p>
   </div>
  </div>
 

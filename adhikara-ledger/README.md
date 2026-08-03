@@ -96,3 +96,24 @@ better inference.
 a vulnerability. The honest price of attack-resistant earned trust is **44.1%
 friction**, versus 64.4% static. Roughly a third of the friction can be removed
 safely, not four fifths. Normal-operation protection is identical across all three.
+
+
+---
+
+## Closing the loop: gate configuration from shadow data
+
+The Viveka Gate's `base_rate_legit` is the single parameter most likely to be set
+wrong, and setting it wrong makes the gate hold ~60% of legitimate payments. The
+shadow period already measures it, so the ledger hands it over directly:
+
+```python
+from ledger import derive_gate_config, shadow_summary
+cfg = derive_gate_config(shadow_df)      # gate configured from observed traffic
+report = shadow_summary(shadow_df)       # numbers for the customer report
+```
+
+Two guards, both of which matter in practice. The estimate is Laplace corrected with
+one pseudo-event, so a shadow window containing zero fraud produces a rate reflecting
+what the sample can support rather than a claim that fraud is impossible. And windows
+under 500 observations keep the shipped default rather than overriding it on thin
+evidence, with the reason printed rather than silently applied.

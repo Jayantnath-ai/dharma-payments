@@ -117,3 +117,26 @@ one pseudo-event, so a shadow window containing zero fraud produces a rate refle
 what the sample can support rather than a claim that fraud is impossible. And windows
 under 500 observations keep the shipped default rather than overriding it on thin
 evidence, with the reason printed rather than silently applied.
+
+
+---
+
+## Friction, decomposed
+
+A single event-count percentage conflates three different costs. `friction.py`
+reports them separately.
+
+| | human friction | dollar friction | analyst hrs/week |
+|---|---|---|---|
+| Incumbent process | 0.9% | 2.1% | 0.4 |
+| Gate, static | 61.1% | 78.3% | 29.5 |
+| Gate, calibrated | 40.5% | 62.0% | 19.5 |
+
+The decomposition does not favour the gate. Dollar-weighted friction exceeds
+event-weighted friction (62% vs 44%) because held payments skew large. Reporting only
+the event count understated the operational cost.
+
+The binding constraint is not the percentage. It is 19.5 analyst hours per week
+against 0.4 for the incumbent process, roughly half a full-time reviewer. Reducing
+that is the next problem, and it is an escalation-handling problem rather than a
+gating one.

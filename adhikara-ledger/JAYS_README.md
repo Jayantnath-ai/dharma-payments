@@ -119,13 +119,26 @@ support, and says so.
 
 ### What the numbers mean
 
-Your current human process interrupts 1.7 percent of payments and catches 1 fraud in
-6. The gate with no learning interrupts 64 percent, which is unusable. The gate after
-shadow learning interrupts 44 percent and catches most fraud.
+One percentage was hiding three different costs, so the system now reports all of
+them. An escalation eats analyst time. A probe is an automated test payment that no
+human ever sees. And a held $80,000 wire is not the same event as a held $500
+invoice.
 
-More interruption than today, dramatically more fraud caught. Whether that trade is
-worth it is the customer's call, and the shadow report is what lets them decide with
-their own numbers.
+| | needs a human | dollars delayed | analyst hours per week |
+|---|---|---|---|
+| Your process today | 0.9% | 2.1% | 0.4 |
+| Gate, no learning | 61.1% | 78.3% | 29.5 |
+| Gate, shadow calibrated | 40.5% | 62.0% | 19.5 |
+
+Two things to notice, and the second one matters more.
+
+Splitting the number did not flatter the system. Dollar friction is higher than event
+friction, 62 against 44 percent, because held payments skew large by construction.
+The honest measure looks worse than the blunt one.
+
+And the number that decides adoption is not a percentage at all. It is 19.5 analyst
+hours a week, roughly half a person, against 0.4 today. That is the real barrier, and
+it is the thing to attack next. The percentage was never the problem.
 
 ---
 
@@ -197,17 +210,14 @@ Then stop. If they ask one question it will be about the friction number. The an
 
 ---
 
-## If asked who built it
+## How this was built
 
-I architected it and directed the build. Claude wrote the implementation.
+Architected and directed by Jayant Nath. Implementation written by Claude in a
+session where every version was attacked before it was accepted.
 
-Three contributions were yours and you should be able to name them cold. Pricing the
-cost of inaction, which is the load bearing idea in the whole system and the thing no
-shipping guardrail does. Shadow mode as the calibration bootstrap. And refusing to
-publish the 65 percent friction reduction until it had been attacked, which is what
-revealed the number was borrowed against a vulnerability.
-
-The obligation that creates: be able to explain any file in the repo without notes.
-Not write it from scratch, explain it. Spend an evening with gate.py and trust.py
-until the inverse horizon rule, the backward Monte Carlo, and the three part identity
-binding are yours to defend under questioning.
+That loop is why this repository contains a rejected design, a documented bug, and an
+unsolved adversarial case rather than only results. The three findings that most
+shaped the outcome all came from refusing an earlier answer: that deferral must be
+priced rather than treated as a free safe harbour, that shadow mode is what makes
+calibration labels uncensored, and that the first version's 17 percent friction
+figure was unsafe and could not be published.

@@ -10,7 +10,7 @@
   --good:#1A7A4A;--warn:#B07D10;--bad:#A8332E;--steel:#2C5F8A}
  *{box-sizing:border-box;margin:0;padding:0}
  body{background:var(--paper);color:var(--ink);font-family:'Space Grotesk',sans-serif;padding:20px 14px 48px}
- .wrap{max-width:820px;margin:0 auto}
+ .wrap{max-width:940px;margin:0 auto}
  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--steel);margin-bottom:6px}
  h1{font-size:clamp(23px,5vw,33px);font-weight:700;letter-spacing:-.02em;line-height:1.12}
  h1 em{font-style:normal;color:var(--steel)}
@@ -73,10 +73,11 @@
   </div>
 
   <table>
-   <thead><tr><th></th><th>Payment</th><th>Amount</th><th>Recoverable</th><th>If nobody looks</th><th>Outcome</th></tr></thead>
+   <thead><tr><th></th><th>Payment</th><th>Amount</th><th>Recoverable</th><th>If nobody looks</th><th>Outcome</th><th>Why</th></tr></thead>
    <tbody id="rows"></tbody>
   </table>
 
+  <p class="note"><b>Read the Why column.</b> Every review marked <i>redundant</i> is analyst time spent on a payment that was never at risk, because the system already refuses to release large unrecoverable payments unreviewed. Those reviews feel important and protect nothing.</p>
   <div class="alert" id="explain"></div>
  </div>
 
@@ -136,12 +137,25 @@ function render(){
   if(isRev)reviewed++; else if(rel){released++; if(i.fraud)risk+=unrec(i);} else held++;
   const outcome=isRev?'<span class="pill p-rev">REVIEWED</span>':
     rel?'<span class="pill p-rel">RELEASED</span>':'<span class="pill p-held">HELD</span>';
+  let why;
+  if(isRev&&!wouldRelease(i)){
+    why='<b>Redundant.</b> Too large and unrecoverable to ever be released unreviewed, so it was already safe. The review only confirms what the default would have done.';
+  } else if(isRev&&wouldRelease(i)){
+    why='<b>Protective.</b> Would have been released when the clock ran out. The review is the only thing standing between this payment and the money leaving.';
+  } else if(rel&&i.fraud){
+    why='<b>Escaped.</b> Small and recoverable, so the default let it through, and nobody looked. This is where the loss happens.';
+  } else if(rel){
+    why='Released by default. Legitimate, so no harm done, but nobody verified that.';
+  } else {
+    why='<b>Safe by default.</b> Above the release limits, so the system holds it whether or not anyone has time. No review needed to protect it.';
+  }
   return `<tr class="${isRev?'reviewed':rel?'released':''}">
    <td class="rank">${ix+1}</td>
    <td>${i.payee}<br><span style="color:var(--soft);font-size:11px">${i.id}</span></td>
    <td>${money(i.amt)}</td><td>${Math.round(i.R*100)}%</td>
    <td style="font-size:11.5px;color:var(--soft)">${wouldRelease(i)?"released":"held"}</td>
-   <td>${outcome}</td></tr>`;}).join("");
+   <td>${outcome}</td>
+   <td style="font-size:11px;color:var(--soft);line-height:1.45;max-width:230px">${why}</td></tr>`;}).join("");
  document.getElementById("s_rev").textContent=reviewed;
  document.getElementById("s_held").textContent=held;
  document.getElementById("s_rel").textContent=released;

@@ -53,12 +53,25 @@ from domain recovery mechanics, and the decision is a three-way priced auction
 - `demo.html`, interactive single-file demo (open in any browser)
 - `frontier.png`, `*.csv`, results
 
-## Important default (found after publication of v0.1)
-`base_rate_legit` defaults to 0.95, i.e. 5% fraud, which matches the stress
-benchmark but not reality. A real accounts payable operation runs around 0.15%
-fraud. At the wrong base rate the gate holds roughly 60% of legitimate payments and
-no finance team would keep it switched on. Set this from your own observed data, or
-better, run the Adhikara Ledger shadow period first and let it be measured.
+## Base rate: measured, not assumed
+`base_rate_legit` defaults to 0.95, i.e. 5% fraud, which is correct for the
+published stress benchmark and badly wrong for a real accounts payable operation
+(~0.15%). At the wrong base rate the gate holds roughly 60% of legitimate payments
+and looks broken.
+
+This is not left to the operator. Run the Adhikara Ledger shadow period first and
+call `derive_gate_config(shadow_df)`, which measures the deployment's own base rate
+and returns a configured gate:
+
+```python
+from ledger import derive_gate_config
+cfg = derive_gate_config(shadow_df)   # measured from your own traffic
+```
+
+The estimate is Laplace corrected, so a shadow window containing zero fraud yields a
+rate reflecting the sample ceiling rather than a claim that fraud is impossible, and
+windows under 500 observations retain the shipped default rather than overriding it
+on thin evidence.
 
 ## Honest limitations
 Synthetic invoice distribution; recovery calibration is anchored to aggregate FFKC

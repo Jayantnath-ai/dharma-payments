@@ -1,0 +1,79 @@
+# Pause Engine v0.1
+
+**What happens after the gate says escalate.**
+
+The Viveka Gate decides whether to pause. Until now escalation was a black box: the
+payment went to "a human" and the story ended. Decomposing the friction metric showed
+that this is where the cost actually lives. The gate needed **19.7 analyst hours per
+week** against an incumbent process using 0.4, roughly half a full-time reviewer. No
+finance team buys that.
+
+The gate cannot fix it. Those escalations are genuinely uncertain payments and the
+gate is right to flag them. The cost has to come out downstream, by making each
+escalation cheaper rather than rarer.
+
+## Result
+
+| | analyst hrs/week | labour cost (90 days) | fraud caught |
+|---|---|---|---|
+| Escalation as a black box | 19.7 | $11,349 | 4 of 4 |
+| Pause Engine | **5.3** | **$3,042** | 4 of 4 |
+
+**73% less analyst time at identical protection.**
+
+## What each mechanism actually contributed
+
+| cumulative | hrs/week |
+|---|---|
+| Arrival order, cold reviews | 19.6 |
+| + prefilled context | 6.6 |
+| + expected-value triage | 6.5 |
+| + worthiness threshold | 5.4 |
+| + same-payee batching | 5.3 |
+
+Almost the entire saving comes from **prefilled context**, the least sophisticated
+mechanism in the design. Most review time was being spent reconstructing why the
+payment was flagged and what the payee's history looked like, all of which the gate
+and the ledger already knew and simply were not showing the reviewer. Showing it cuts
+a review from roughly 12 minutes to 4.
+
+Triage, batching, and the worthiness threshold together account for less than a fifth
+of the improvement. This is worth stating plainly because the reverse would have been
+assumed.
+
+## Design error found and corrected
+
+The first triage key ranked items purely by stake: probability of fraud times
+unrecoverable amount. Under scarce capacity this measurably made outcomes **worse**,
+leaving $106,000 of unreviewed value released at 15 minutes per day of capacity,
+against $60,724 for simple arrival order.
+
+The cause: the highest-stake items are precisely the ones the timeout default already
+handles safely, because large unrecoverable payments are auto-*held* rather than
+released. Ranking by stake spent scarce review capacity on items that were already
+safe, while auto-release-eligible items timed out unreviewed.
+
+A review is only worth its cost when the default disposition would be risky. The
+corrected key conditions stake on whether the engine would otherwise release the item.
+Result at the same capacity: **$0** unreviewed value released, at every capacity level
+tested.
+
+## Timeout defaults
+
+An escalation nobody answers is the worst outcome in the system: it blocks a
+legitimate payment indefinitely while providing no safety benefit. Every paused item
+carries an explicit expiry and a default chosen by structure rather than convenience.
+Release only what could survive being wrong, meaning recoverable enough and small
+enough. Everything else stays held and is reported as unresolved rather than quietly
+released.
+
+A queue that silently grows is a failure mode, not a steady state, so the engine
+reports backlog explicitly and separates deliberate policy dispositions from timeouts.
+
+## Files
+`pause.py` (engine, triage, context assembly, expiry) · `pause_ablation.json` (results)
+
+## Lineage
+Third executable component of DharmaAGI. The Pause Engine is what the gate's pause
+actually resolves into: not an indefinite hold, but a bounded, prioritised, and
+explicitly defaulted deferral.

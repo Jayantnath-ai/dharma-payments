@@ -1,0 +1,47 @@
+[
+ {
+  "step": "Arrival order, cold reviews",
+  "hrs": 19.6,
+  "cost": 11349.0,
+  "reviewed": 1261,
+  "auto": 0,
+  "caught": 4,
+  "total": 4
+ },
+ {
+  "step": "+ prefilled context",
+  "hrs": 6.6,
+  "cost": 3792.0,
+  "reviewed": 1264,
+  "auto": 0,
+  "caught": 4,
+  "total": 4
+ },
+ {
+  "step": "+ expected-value triage",
+  "hrs": 6.5,
+  "cost": 3771.0,
+  "reviewed": 1257,
+  "auto": 0,
+  "caught": 4,
+  "total": 4
+ },
+ {
+  "step": "+ worthiness threshold",
+  "hrs": 5.4,
+  "cost": 3099.0,
+  "reviewed": 1033,
+  "auto": 28,
+  "caught": 4,
+  "total": 4
+ },
+ {
+  "step": "+ same-payee batching",
+  "hrs": 5.3,
+  "cost": 3042.0,
+  "reviewed": 1032,
+  "auto": 28,
+  "caught": 4,
+  "total": 4
+ }
+]

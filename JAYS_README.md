@@ -197,17 +197,14 @@ Then stop. If they ask one question it will be about the friction number. The an
 
 ---
 
-## If asked who built it
+## How this was built
 
-I architected it and directed the build. Claude wrote the implementation.
+Architected and directed by Jayant Nath. Implementation written by Claude in a
+session where every version was attacked before it was accepted.
 
-Three contributions were yours and you should be able to name them cold. Pricing the
-cost of inaction, which is the load bearing idea in the whole system and the thing no
-shipping guardrail does. Shadow mode as the calibration bootstrap. And refusing to
-publish the 65 percent friction reduction until it had been attacked, which is what
-revealed the number was borrowed against a vulnerability.
-
-The obligation that creates: be able to explain any file in the repo without notes.
-Not write it from scratch, explain it. Spend an evening with gate.py and trust.py
-until the inverse horizon rule, the backward Monte Carlo, and the three part identity
-binding are yours to defend under questioning.
+That loop is why this repository contains a rejected design, a documented bug, and an
+unsolved adversarial case rather than only results. The three findings that most
+shaped the outcome all came from refusing an earlier answer: that deferral must be
+priced rather than treated as a free safe harbour, that shadow mode is what makes
+calibration labels uncensored, and that the first version's 17 percent friction
+figure was unsafe and could not be published.

@@ -2,3 +2,7 @@
 __pycache__/
 *.pyc
 .DS_Store
+PREP_NOTES_private.md
+linkedin_post.md
+working_backwards_pr.md
+PUSH_INSTRUCTIONS.md

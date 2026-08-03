@@ -123,6 +123,7 @@ class PauseEngineConfig:
     # being wrong. Otherwise the item stays held and is reported as unresolved.
     auto_release_reversibility_floor: float = 0.55
     auto_release_max_amount: float = 10_000.0
+    delay_cost_per_hour_frac: float = 0.0002   # cost of delaying a legitimate payment
 
 
 class PauseEngine:
@@ -148,25 +149,43 @@ class PauseEngine:
     # ---------------------------------------------------------------- triage
     def _triage_key(self, item: "PausedItem") -> float:
         """
-        Value of spending a human on this item.
+        Value of spending a human on this item: what changes because someone looked.
 
-        DESIGN ERROR CORRECTED HERE. The first version ranked purely by stake, which
-        measurably made outcomes WORSE under scarce capacity. The reason: the highest
-        stake items are precisely the ones the timeout default already handles safely,
-        because large unrecoverable payments are auto-HELD rather than released.
-        Ranking by stake therefore spent scarce review capacity on items that were
-        already safe, while auto-release-eligible items timed out unreviewed.
+        TWO CORRECTIONS ARE RECORDED HERE.
 
-        A review is only worth its cost when the DEFAULT would be risky. So the key is
-        stake conditioned on the item being one the engine would otherwise release.
+        First: the original key ranked purely by stake, which measurably performed
+        WORSE than arrival order under scarce capacity. The highest-stake items are
+        precisely the ones the timeout default already handles safely, because large
+        unrecoverable payments are auto-HELD rather than released. Ranking by stake
+        spent scarce capacity protecting what was already protected.
+
+        Second: the first correction discounted would-be-held items by an arbitrary
+        factor of 0.1. That placeholder is wrong at scale, because ten percent of a
+        very large stake still outranks the full stake of a small releasable payment,
+        so the ordering barely changed where it mattered most. The discount is now
+        derived rather than guessed.
+
+        The two cases buy genuinely different things:
+
+          default RELEASE -> a review can prevent the entire unrecoverable loss.
+                             Value = P(fraud) x unrecoverable amount.
+          default HOLD    -> the money is already safe either way. A review only
+                             unblocks a legitimate payment sooner, so its value is
+                             the DELAY COST avoided, which is bounded by the holding
+                             period and is unrelated to how large the loss would
+                             have been.
         """
         would_release = (item.reversibility >= self.cfg.auto_release_reversibility_floor
                          and item.amount <= self.cfg.auto_release_max_amount)
-        if not would_release:
-            # Default is to hold. A review can still help (it unblocks a legitimate
-            # payment) but it is not protecting money, so it ranks below.
-            return item.expected_loss_if_wrong * 0.1
-        return item.expected_loss_if_wrong
+        if would_release:
+            return item.expected_loss_if_wrong
+
+        # Default is to hold: the review buys avoided delay on a probably-legitimate
+        # payment, not loss prevention.
+        p_legit = 1.0 - item.p_fraud
+        return (p_legit * item.amount
+                * self.cfg.delay_cost_per_hour_frac
+                * self.cfg.timeout_hours)
 
     def _ordered(self) -> list:
         if not self.cfg.triage_enabled:

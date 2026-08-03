@@ -58,6 +58,15 @@ safe, while auto-release-eligible items timed out unreviewed.
 
 A review is only worth its cost when the default disposition would be risky. The
 corrected key conditions stake on whether the engine would otherwise release the item.
+
+**A second correction followed.** The first fix discounted would-be-held items by an
+arbitrary factor of 0.1, which was flagged at the time as a placeholder rather than a
+derived term. Building the interactive demo exposed why it was inadequate: ten percent
+of a very large stake still outranks the full stake of a small releasable payment, so
+the ordering barely changed where it mattered most. The discount is now derived. When
+the default is HOLD the money is already safe either way, so a review buys only the
+avoided delay on a probably-legitimate payment, a value bounded by the holding period
+and unrelated to the size of the loss that was never going to happen.
 Result at the same capacity: **$0** unreviewed value released, on every one of 15
 seeds and at every capacity level tested, against a mean of $29,845 for arrival
 order.
@@ -75,7 +84,7 @@ A queue that silently grows is a failure mode, not a steady state, so the engine
 reports backlog explicitly and separates deliberate policy dispositions from timeouts.
 
 ## Files
-`pause.py` (engine, triage, context assembly, expiry) · `pause_ablation.json` (results)
+`pause.py` (engine, triage, context assembly, expiry) · `pause_demo.html` (interactive) · `pause_ablation.json`
 
 ## Lineage
 Third executable component of DharmaAGI. The Pause Engine is what the gate's pause

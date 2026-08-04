@@ -206,7 +206,7 @@ one of fifteen random seeds tested.
 
 ---
 
-## What the numbers survived, and what did not
+## What numbers survived, and what did not
 
 Every result here was originally produced from a single run. Because two earlier
 numbers in this project turned out to be flukes, everything was re-run across 15 to 20

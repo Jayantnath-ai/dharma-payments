@@ -206,6 +206,29 @@ one of fifteen random seeds tested.
 
 ---
 
+## Does it actually use AI?
+
+Yes, and it is worth knowing exactly where.
+
+`agent.py` sends a real invoice to Claude and gets back a real judgement: how likely
+this is legitimate, what specifically looked wrong, whether the bank details changed
+from last time. That judgement is what the gate then decides about.
+
+The interesting result: on a well-crafted fake invoice, the gate refuses to pay it at
+every confidence level from 70 percent to 95 percent. On a real invoice from a known
+vendor it pays at 95 percent. The decision is being driven by whether the money could
+be clawed back, not by how sure the AI is. Which is the entire point of the system.
+
+The big benchmark runs use simulated confidence numbers rather than live AI calls,
+because running six thousand invoices through an API twenty times over would cost real
+money and prove nothing extra. That choice is stated openly in the evaluation document
+rather than glossed over.
+
+One thing deliberately not used: RAG, the retrieval technique everyone expects to see
+in an AI system. Looking up a vendor's history here is an exact database lookup by
+vendor ID. Retrieval by semantic similarity would make it slower and less accurate. The
+repo says so rather than adding it to look current.
+
 ## What the numbers survived, and what did not
 
 Every result here was originally produced from a single run. Because two earlier

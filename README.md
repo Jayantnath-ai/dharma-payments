@@ -85,6 +85,31 @@ presenting the real payee, the real account, and an ordinary amount. Nothing in 
 transaction is wrong, and it requires out-of-band verification rather than better
 inference.
 
+## Evaluation
+
+See [EVALUATION.md](./EVALUATION.md) for baselines, metrics, adversarial models,
+ablation design, seed stability, and an explicit statement of what this evaluation does
+not establish. Two headline claims were withdrawn as anecdotal and one was revised
+downward after seed testing; the document says which and why.
+
+It also states why retrieval-augmented generation is deliberately not used: the payee
+lookup is a keyed read of an exact record, so semantic retrieval would substitute
+approximation for a database read that is already correct.
+
+## The agent layer
+
+`viveka-gate/agent.py` sends an invoice and structured payee history to Claude and
+receives a JSON assessment: probability legitimate, the signals behind it, whether
+banking details changed, and a rationale. That confidence feeds the gate.
+
+On the sample business email compromise invoice the gate escalates at every agent
+confidence from 0.70 to 0.95. On a legitimate invoice from a known payee it executes at
+0.95. The boundary moves with reversibility, not with the model's certainty, which is
+the claim the system exists to test.
+
+Benchmark runs use a simulated confidence distribution rather than live API calls, for
+cost reasons stated in EVALUATION.md section 8.
+
 ## Reading order
 
 Start with [JAYS_README.md](./JAYS_README.md) for a plain language explanation of all

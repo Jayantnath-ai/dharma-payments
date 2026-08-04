@@ -80,13 +80,16 @@ earned by *specific counterparties behaving consistently over time*.
 
 **Results (deterministic scoring, 180-day stream):**
 
+Catch rate, mean across 15 seeds with ~150 fraud events per run:
+
 | attack | label-bound (rejected) | identity-bound (shipped) | static baseline |
 |---|---|---|---|
-| BEC: real vendor, changed account | 0.9/17, $44.3k | **12.6/17, $11.2k** | 12.6/17, $11.2k |
-| Known account, abnormal amount | 8.1/14, $59.2k | **11.7/14, $26.0k** | 11.7/14, $26.0k |
-| Full takeover: everything matches | 0.0/13, $42.9k | 6.3/13, $14.1k | 8.1/13, $10.2k |
+| BEC: real vendor, changed account | **2.1%** | **61.7%** | 61.5% |
+| Known account, abnormal amount | 49.9% | **86.2%** | 86.5% |
+| Full takeover: everything matches | 2.6% | 33.1% | 62.3% |
 
-Attacks 1 and 2 are **fully closed**, v0.2 matches the static baseline exactly.
+Attacks 1 and 2 are **fully closed**: identity binding recovers static-equivalent
+protection within noise.
 Attack 3 is **partially** closed and remains the honest limit: if an attacker
 presents the real payee, the real account, and an ordinary amount, nothing in the
 transaction distinguishes it. That case requires out-of-band verification, not
@@ -140,3 +143,14 @@ The binding constraint is not the percentage. It is 19.5 analyst hours per week
 against 0.4 for the incumbent process, roughly half a full-time reviewer. Reducing
 that is the next problem, and it is an escalation-handling problem rather than a
 gating one.
+
+
+---
+
+## Seed stability
+
+See [../stability](../stability). Friction and analyst-time figures are stable across
+20 seeds (sd under 2 points). Dollar exposure figures were **withdrawn** as anecdotal,
+since a realistic 180-day stream contains a mean of 4.5 fraud events. The full-takeover
+residual was **revised downward** on fuller testing: identity-bound trust catches 33.1%
+against a static baseline of 62.3%, a larger cost than the single-seed run suggested.

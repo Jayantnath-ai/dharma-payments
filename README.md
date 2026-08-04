@@ -9,6 +9,12 @@ changed bank details. Confidence is the one signal the attacker controls.
 
 Three components, each answering a question the previous one leaves open.
 
+![System flow](docs/system_flow.svg)
+
+The gate decides, the Pause Engine works the escalations cheaply, and every resolved
+outcome feeds the ledger, which recalibrates the gate. That return path is why the
+system becomes less intrusive over time rather than more.
+
 ## [Viveka Gate](./viveka-gate) v0.1.2
 
 **Should this payment execute?**

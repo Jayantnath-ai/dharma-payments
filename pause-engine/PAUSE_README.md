@@ -12,6 +12,19 @@ The gate cannot fix it. Those escalations are genuinely uncertain payments and t
 gate is right to flag them. The cost has to come out downstream, by making each
 escalation cheaper rather than rarer.
 
+![Pause Engine flow](../docs/pause_engine_flow.svg)
+
+Colour carries meaning here: blue is engine processing, grey is resolved without a
+human, teal is resolved by a human. Two of the three exit paths never consume analyst
+attention, which is where the hours go.
+
+Three things the diagram makes explicit. The worthiness check sits **before** the
+queue, so payments whose stake is smaller than the cost of looking never enter it at
+all. Prefill sits between the check and the queue, and carries almost the entire
+saving despite being the least sophisticated mechanism. And the timeout default is a
+first-class exit rather than a failure mode, governed by a structural rule: release
+only what could survive being wrong.
+
 ## Result
 
 Mean across 15 seeds:
